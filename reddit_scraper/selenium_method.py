@@ -32,12 +32,12 @@ def selenium_reddit_scrape():
         with open('temp.txt', 'r') as f:
             html = f.read()
 
-        soup = bs(html, 'html.parser')
+        soup = bs(html, 'lxml')
 
         results = soup.find(id='t3_8j4ep6')
 
-        for s in results.find_all('div'):
-            print(s)
+        for s in results.findAll('div', {"data-click-id": "body"}):
+            print(s, '\n', '_' * 100)
 
 
     except TimeoutException as e:
@@ -46,5 +46,6 @@ def selenium_reddit_scrape():
     except Exception as e:
         print('timed out', e.__str__())
     finally:
+        pass
 
-        driver.quit()
+        # driver.quit()
