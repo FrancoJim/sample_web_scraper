@@ -7,6 +7,11 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from csv import writer, QUOTE_MINIMAL
 
+'''
+Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV.
+
+'''
+
 
 def get_page(url):
     with get(url, stream=True) as src:
@@ -17,7 +22,8 @@ def parse_judges(html):
     bs = BeautifulSoup(html, 'lxml')
     html = bs.find('div', {'id': 'ctl00_ctl00_MainEditable_mainContent_RadEditor1'})
 
-    j_type = ' '
+    J, j_type, h_status = [], ' ', 0
+
     for j in html.findAll(['span', ['table', {'class': 'justicetable'}]]):
 
         if j.__str__().startswith('<span'):
@@ -26,23 +32,25 @@ def parse_judges(html):
                 j_type = j_text
 
         elif j.__str__().startswith('<table'):
-
             rows = j.findAll('tr')
             header = rows[0].findAll('th')
 
-            J = [['Given Name', 'Sur Name'] + [h.text for h in header[2:]] + ['Position']]
+            if h_status == 0:
+                J.append(['Given Name', 'Sur Name'] + [h.text for h in header[2:]] + ['Position', 'URL Link'])
+                h_status = 1
+
             for r in rows[1:]:
                 cols = r.findAll('td')
 
                 if cols[0].a:
-                    j_href = cols[0].a['href']
+                    j_href = 'https://www.supremecourt.gov/' + cols[0].a['href']
                     first_col = cols[0].a
                 else:
+                    j_href = ''
                     first_col = cols[0]
 
                 last_name, first_name = first_col.text.__str__().split(',', maxsplit=1)
-                J.append([first_name, last_name] + [i.text for i in cols[1:]] + [j_type[:-1]])
-
+                J.append([first_name, last_name] + [i.text for i in cols[1:]] + [j_type[:-1], j_href])
     return J
 
 
@@ -53,5 +61,8 @@ def create_csv(data, csv_file_path='us_supreme_justices'):
             f.writerow(i)
 
 
-def get_domain():
-    pass
+if __name__ == '__main__':
+    url = 'https://www.supremecourt.gov/about/members_text.aspx'
+    html = get_page(url=url)
+    judge_list = parse_judges(html)
+    create_csv(judge_list)
