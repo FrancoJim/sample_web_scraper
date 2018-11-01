@@ -106,3 +106,4 @@ venv.bak/
 workbench.py
 .DS_Store
 configs
+*.json
