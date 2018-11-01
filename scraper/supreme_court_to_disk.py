@@ -13,6 +13,9 @@ Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV
 '''
 
 
+# todo: Add some logging and error handling
+
+
 def get_page(url):
     with get(url, stream=True) as src:
         return src.content
@@ -22,7 +25,7 @@ def parse_judges(html):
     bs = BeautifulSoup(html, 'lxml')
     html = bs.find('div', {'id': 'ctl00_ctl00_MainEditable_mainContent_RadEditor1'})
 
-    J, j_type, h_status = [], ' ', 0
+    Judge_lst, j_type, h_status = [], ' ', 0
 
     for j in html.findAll(['span', ['table', {'class': 'justicetable'}]]):
 
@@ -36,7 +39,7 @@ def parse_judges(html):
             header = rows[0].findAll('th')
 
             if h_status == 0:
-                J.append(['Given Name', 'Sur Name'] + [h.text for h in header[2:]] + ['Position', 'URL Link'])
+                Judge_lst.append(['Given Name', 'Sur Name'] + [h.text for h in header[2:]] + ['Position', 'URL Link'])
                 h_status = 1
 
             for r in rows[1:]:
@@ -50,8 +53,8 @@ def parse_judges(html):
                     first_col = cols[0]
 
                 last_name, first_name = first_col.text.__str__().split(',', maxsplit=1)
-                J.append([first_name, last_name] + [i.text for i in cols[1:]] + [j_type[:-1], j_href])
-    return J
+                Judge_lst.append([first_name, last_name] + [i.text for i in cols[1:]] + [j_type[:-1], j_href])
+    return Judge_lst
 
 
 def create_csv(data, csv_file_path='us_supreme_justices'):
