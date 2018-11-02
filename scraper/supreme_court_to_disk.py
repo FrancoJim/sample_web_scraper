@@ -1,11 +1,12 @@
 #!/bin/env python3
 
 from requests import get
-from requests.exceptions import RequestException
+from requests import exceptions as r_except
 from contextlib import closing
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from csv import writer, QUOTE_MINIMAL
+import logging as l
 
 '''
 Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV.
@@ -23,8 +24,22 @@ def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
     :return: HTML source code of provided URL.
     :type: str
     '''
-    with get(url, stream=True) as src:
-        return src.content
+    try:
+        with get(url, stream=True) as src:
+
+            # Check if page came back correctly
+            if src.status_code == 200:
+                return src.content
+            else:
+                l.warning('Unable to pull URL.\nStatus code: {}'.format(src.status_code))
+    except (r_except.InvalidURL, r_except.MissingSchema) as e:
+        l.error('URL is invalid.\nPlease, check URL string and try again.\nerr: {}'.format(e.__str__()))
+    except r_except.ConnectionError as e:
+        l.error('URL is unreachable.\nPlease, check URL string  and connection, then try again.\nerr: {}'.format(
+            e.__str__()))
+    except Exception as e:
+        l.error('Unexpected issue while pulling url: {}\nerr: {}'.format(url, e.__str__()))
+    return 1
 
 
 def parse_judges(html):
