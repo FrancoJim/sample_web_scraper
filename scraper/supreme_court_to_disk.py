@@ -74,6 +74,14 @@ def parse_judges(html):
 
 
 def create_csv(data, csv_file_path='us_supreme_justices'):
+    '''
+    Imports data to CSV file.
+    :param data: List of lines to import into CSV.
+    :type data: Nested list(s) within list. i.e. [[Header row, ...], [Data row(s), ...], ...]
+    :param csv_file_path: File name and path for output file.
+    :type csv_file_path: str
+    :return: None
+    '''
     with open(csv_file_path + '.csv', 'w') as csv_file:
         f = writer(csv_file, delimiter=',', quotechar='"', quoting=QUOTE_MINIMAL)
         for i in data:
