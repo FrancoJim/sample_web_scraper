@@ -22,6 +22,16 @@ def get_page(url):
 
 
 def parse_judges(html):
+    '''
+    Parses source code of U.S. Supreme Justices to do following:
+    - Extract all justices, while retaining position in SC
+    - Identify if justice has a URL for more information on justice.
+    - Split justice's name to given and sur names.
+
+    :param html: HTML Source code
+    :return: CSV formatted list of justices.
+    :type: Nested lists within list. i.e. [[Header row, ...], [Data row(s), ...], ...]
+    '''
     bs = BeautifulSoup(html, 'lxml')
     html = bs.find('div', {'id': 'ctl00_ctl00_MainEditable_mainContent_RadEditor1'})
 
@@ -52,8 +62,8 @@ def parse_judges(html):
                     j_href = ''
                     first_col = cols[0]
 
-                last_name, first_name = first_col.text.__str__().split(',', maxsplit=1)
-                Judge_lst.append([first_name, last_name] + [i.text for i in cols[1:]] + [j_type[:-1], j_href])
+                sur_name, given_name = first_col.text.__str__().split(',', maxsplit=1)
+                Judge_lst.append([given_name, sur_name] + [i.text for i in cols[1:]] + [j_type[:-1], j_href])
     return Judge_lst
 
 
