@@ -16,7 +16,7 @@ Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV
 # todo: Add some logging and error handling
 
 
-def get_page(url):
+def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
     with get(url, stream=True) as src:
         return src.content
 
@@ -75,7 +75,6 @@ def create_csv(data, csv_file_path='us_supreme_justices'):
 
 
 if __name__ == '__main__':
-    url = 'https://www.supremecourt.gov/about/members_text.aspx'
-    html = get_page(url=url)
+    html = get_page()
     judge_list = parse_judges(html)
     create_csv(judge_list)
