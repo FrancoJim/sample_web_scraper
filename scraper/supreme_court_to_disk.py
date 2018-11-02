@@ -17,6 +17,12 @@ Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV
 
 
 def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
+    '''
+    Obtains HTML source code from provided URL.
+    :param url: Reachable URL. Default: U.S. Government's Supreme Court's Justices
+    :return: HTML source code of provided URL.
+    :type: str
+    '''
     with get(url, stream=True) as src:
         return src.content
 
