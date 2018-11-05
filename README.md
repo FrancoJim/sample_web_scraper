@@ -35,10 +35,6 @@ judge_list = sc.parse_judges(html=html)
 sc.create_csv(data=judge_list, csv_file_path='us_supreme_justices')
 ```
 
-## Built With
-
-* [@{DEV_github_mention_name}](https://github.com/{DEV_github_mention_github_repository}) - {DEV_github_repository_name}
-
 ## Contributing
 
 * [@FrancoJim](https://github.com/FrancoJim) (Kevin Lang)
