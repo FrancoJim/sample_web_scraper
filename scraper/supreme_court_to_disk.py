@@ -1,12 +1,11 @@
 #!/bin/env python3
 
-from requests import get
-from requests import exceptions as r_except
-from contextlib import closing
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse
+import logging as log
 from csv import writer, QUOTE_MINIMAL
-import logging as l
+
+from bs4 import BeautifulSoup
+from requests import exceptions as r_except
+from requests import get
 
 '''
 Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV.
@@ -23,7 +22,10 @@ def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
     :param url: Reachable URL. Default: U.S. Government's Supreme Court's Justices
     :return: HTML source code of provided URL.
     :type: str
+    :return err: 1
+    :type err: integer
     '''
+
     try:
         with get(url, stream=True) as src:
 
@@ -31,14 +33,14 @@ def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
             if src.status_code == 200:
                 return src.content
             else:
-                l.warning('Unable to pull URL.\nStatus code: {}'.format(src.status_code))
+                log.warning('Unable to pull URL.\nStatus code: {}'.format(src.status_code))
     except (r_except.InvalidURL, r_except.MissingSchema) as e:
-        l.error('URL is invalid.\nPlease, check URL string and try again.\nerr: {}'.format(e.__str__()))
+        log.error('URL is invalid.\nPlease, check URL string and try again.\nerr: {}'.format(e.__str__()))
     except r_except.ConnectionError as e:
-        l.error('URL is unreachable.\nPlease, check URL string  and connection, then try again.\nerr: {}'.format(
+        log.error('URL is unreachable.\nPlease, check URL string  and connection, then try again.\nerr: {}'.format(
             e.__str__()))
     except Exception as e:
-        l.error('Unexpected issue while pulling url: {}\nerr: {}'.format(url, e.__str__()))
+        log.error('Unexpected issue while pulling url: {}\nerr: {}'.format(url, e.__str__()))
     return 1
 
 
@@ -97,10 +99,17 @@ def create_csv(data, csv_file_path='us_supreme_justices'):
     :type csv_file_path: str
     :return: None
     '''
+
     with open(csv_file_path + '.csv', 'w') as csv_file:
         f = writer(csv_file, delimiter=',', quotechar='"', quoting=QUOTE_MINIMAL)
         for i in data:
-            f.writerow(i)
+            try:
+                f.writerow(i)
+            except Exception as e:
+                log.error("Unable to write line to {csv_file}. err: {err}".format(**{'csv_file': csv_file_path + '.csv',
+                                                                                     'err': e.__str__()}
+                                                                                  )
+                          )
 
 
 if __name__ == '__main__':
