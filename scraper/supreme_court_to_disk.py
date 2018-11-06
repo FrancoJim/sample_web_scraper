@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 import logging as log
 from csv import writer, QUOTE_MINIMAL
