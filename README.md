@@ -1,6 +1,6 @@
 # sample_web_scraper
 
-Simple example of web scrapping Google search results and basic data archiving.
+Web scraping examples with data archiving for various tasks and data collection.
 
 ### Prerequisites
 

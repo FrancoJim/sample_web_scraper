@@ -13,9 +13,6 @@ Web Scraping utility to pull list of all U.S. Supreme Justices and import to CSV
 '''
 
 
-# todo: Add some logging and error handling
-
-
 def get_page(url='https://www.supremecourt.gov/about/members_text.aspx'):
     '''
     Obtains HTML source code from provided URL.
