@@ -80,7 +80,7 @@ progressbar2==3.35.2
 prompt-toolkit==1.0.15
 protobuf==3.5.1
 ptyprocess==0.5.2
-py==1.5.2
+py==1.10.0
 py2app==0.14
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
